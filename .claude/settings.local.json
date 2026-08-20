@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:tympanus.net)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:codepen.io)",
+      "WebFetch(domain:gist.github.com)"
+    ]
+  }
+}
