@@ -2,736 +2,424 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Valentine's Sunflower Bouquet</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Valentine Bouquet 🌻</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            overflow: hidden;
-            background: #1a1a2e;
-            font-family: 'Georgia', serif;
-        }
-
-        #canvas-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            pointer-events: none;
-            z-index: 10;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; touch-action: none; }
+        body { font-family: 'Georgia', serif; overflow: hidden; background: #1a1a2e; }
+        #canvas { display: block; width: 100vw; height: 100vh; }
+        .ui { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
         .question-box {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 40px 50px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            pointer-events: auto;
-            max-width: 90%;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); text-align: center; 
+            pointer-events: auto; transition: all 0.5s ease; width: 85%; max-width: 400px;
         }
-
-        .question-box h1 {
-            color: #e63946;
-            font-size: 2.5rem;
-            margin-bottom: 30px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 15px 40px;
-            font-size: 1.3rem;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            font-family: inherit;
-        }
-
-        .btn-yes {
-            background: linear-gradient(135deg, #ff6b6b, #e63946);
-            color: white;
-            box-shadow: 0 4px 15px rgba(230, 57, 70, 0.4);
-        }
-
-        .btn-yes:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(230, 57, 70, 0.6);
-        }
-
-        .btn-no {
-            background: linear-gradient(135deg, #6c757d, #495057);
-            color: white;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            position: relative;
-        }
-
-        .btn-no:hover {
-            transform: scale(1.05);
-        }
-
-        .final-message {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            pointer-events: auto;
-        }
-
-        .final-message h1 {
-            color: #ff6b6b;
-            font-size: 4rem;
-            text-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-
-        .hearts {
-            font-size: 3rem;
-            margin: 20px 0;
-            animation: float 2s ease-in-out infinite;
-        }
-
-        .btn-reset {
-            margin-top: 20px;
-            padding: 10px 30px;
-            font-size: 1rem;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 2px solid white;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-reset:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .sad-message {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            pointer-events: auto;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 40px;
-            border-radius: 20px;
-        }
-
-        .sad-message h1 {
-            color: #aaa;
-            font-size: 2rem;
-        }
-
-        .sad-message p {
-            color: #888;
-            margin-top: 10px;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        @media (max-width: 600px) {
-            .question-box {
-                padding: 25px 30px;
-            }
-            .question-box h1 {
-                font-size: 1.8rem;
-            }
-            .btn {
-                padding: 12px 30px;
-                font-size: 1.1rem;
-            }
-            .final-message h1 {
-                font-size: 2.5rem;
-            }
-            .hearts {
-                font-size: 2rem;
-            }
-        }
+        .question-box.hide { opacity: 0; transform: translate(-50%, -50%) scale(0.8); pointer-events: none; }
+        h1 { font-size: 1.5em; color: #ff8f00; margin-bottom: 20px; }
+        button { padding: 12px 30px; font-size: 1.1em; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; }
+        .yes { background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%); color: white; margin-bottom: 15px; }
+        .no { background: linear-gradient(135deg, #e0e0e0 0%, #b0b0b0 100%); color: #333; position: absolute; transition: all 0.3s ease; left: 50%; top: 60px; transform: translateX(-50%); }
+        .yes:hover { transform: scale(1.05); }
+        .button-container { position: relative; margin-top: 20px; display: flex; flex-direction: column; align-items: center; min-height: 120px; }
+        .message-overlay { position: absolute; bottom: 12%; left: 50%; transform: translateX(-50%); text-align: center; opacity: 0; transition: all 1s ease; }
+        .message-overlay.show { opacity: 1; }
+        .message-overlay h2 { font-size: clamp(2em, 8vw, 3.5em); color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); margin-bottom: 20px; }
+        .reset-btn { background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%); color: white; margin-top: 15px; pointer-events: auto; }
     </style>
 </head>
 <body>
-    <div id="canvas-container"></div>
-
-    <div class="overlay">
+    <canvas id="canvas"></canvas>
+    <div class="ui">
         <div class="question-box" id="questionBox">
-            <h1>Will You Be My Valentine?</h1>
-            <div class="buttons">
-                <button class="btn btn-yes" id="btnYes">Yes!</button>
-                <button class="btn btn-no" id="btnNo">No</button>
+            <h1>Will You Be My Valentine? 💕</h1>
+            <div class="button-container">
+                <button class="yes" onclick="startAnimation()">Yes! 🌻</button>
+                <button class="no" id="noBtn" onclick="handleNoClick(event)">No</button>
             </div>
         </div>
-
-        <div class="final-message" id="finalMessage">
-            <h1>I LOVE YOU</h1>
-            <div class="hearts">💕 💖 💕</div>
-            <button class="btn-reset" id="btnReset">Start Over</button>
-        </div>
-
-        <div class="sad-message" id="sadMessage">
-            <h1>😢</h1>
-            <p>Maybe next time...</p>
-            <button class="btn-reset" id="btnResetSad">Try Again</button>
+        <div class="message-overlay" id="finalMessage">
+            <h2>I LOVE YOU</h2>
+            <button class="reset-btn" onclick="resetAnimation()">Again? 💕</button>
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // Audio Context
-        let audioCtx = null;
-
-        function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-        }
-
-        function playGrowSound() {
-            initAudio();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(80, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.5);
-
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.5);
-        }
-
-        function playBloomSound() {
-            initAudio();
-            const frequencies = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
-
-            frequencies.forEach((freq, i) => {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-
-                osc.type = 'sine';
-                osc.frequency.value = freq;
-
-                const startTime = audioCtx.currentTime + i * 0.1;
-                gain.gain.setValueAtTime(0, startTime);
-                gain.gain.linearRampToValueAtTime(0.08, startTime + 0.05);
-                gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.4);
-
-                osc.start(startTime);
-                osc.stop(startTime + 0.4);
-            });
-        }
-
-        function playCheerSound() {
-            initAudio();
-            const chords = [
-                [261.63, 329.63, 392.00], // C major
-                [293.66, 369.99, 440.00], // D major
-                [329.63, 415.30, 493.88], // E major
-                [349.23, 440.00, 523.25]  // F major
-            ];
-
-            chords.forEach((chord, i) => {
-                chord.forEach(freq => {
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-
-                    osc.type = 'triangle';
-                    osc.frequency.value = freq;
-
-                    const startTime = audioCtx.currentTime + i * 0.3;
-                    gain.gain.setValueAtTime(0.06, startTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.25);
-
-                    osc.start(startTime);
-                    osc.stop(startTime + 0.3);
-                });
-            });
-        }
-
-        function playDodgeSound() {
-            initAudio();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1);
-
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.1);
-        }
-
-        function playSadSound() {
-            initAudio();
-            const frequencies = [293.66, 261.63, 233.08, 196.00]; // Descending
-
-            frequencies.forEach((freq, i) => {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-
-                osc.type = 'sawtooth';
-                osc.frequency.value = freq;
-
-                const startTime = audioCtx.currentTime + i * 0.3;
-                gain.gain.setValueAtTime(0.05, startTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.25);
-
-                osc.start(startTime);
-                osc.stop(startTime + 0.3);
-            });
-        }
-
-        // Three.js Setup
-        const container = document.getElementById('canvas-container');
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x1a1a2e);
-
-        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 5, 20);
-
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        container.appendChild(renderer.domElement);
-
-        // Lights
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-        scene.add(ambientLight);
-
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        directionalLight.position.set(5, 10, 7);
-        scene.add(directionalLight);
-
-        const pointLight = new THREE.PointLight(0xffd700, 0.5);
-        pointLight.position.set(-5, 5, 5);
-        scene.add(pointLight);
-
-        // Materials
-        const stemMaterial = new THREE.MeshStandardMaterial({ color: 0x2d5a27 });
-        const diskMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
-        const petalMaterial = new THREE.MeshStandardMaterial({
-            color: 0xffd700,
-            side: THREE.DoubleSide
-        });
-
-        // Create petal shape
-        function createPetalGeometry() {
-            const shape = new THREE.Shape();
-            shape.moveTo(0, 0);
-            shape.bezierCurveTo(0.3, 0.5, 0.3, 1.2, 0, 1.8);
-            shape.bezierCurveTo(-0.3, 1.2, -0.3, 0.5, 0, 0);
-
-            const extrudeSettings = {
-                steps: 1,
-                depth: 0.05,
-                bevelEnabled: false
-            };
-
-            return new THREE.ExtrudeGeometry(shape, extrudeSettings);
-        }
-
-        const petalGeometry = createPetalGeometry();
-
-        // Create sunflower
-        function createSunflower(stemHeight, tiltX, tiltZ, scale) {
-            const flower = new THREE.Group();
-            flower.userData = {
-                stemHeight,
-                tiltX,
-                tiltZ,
-                scale,
-                animated: false
-            };
-
-            // Stem
-            const stemGeometry = new THREE.CylinderGeometry(0.15, 0.2, stemHeight, 8);
-            const stem = new THREE.Mesh(stemGeometry, stemMaterial);
-            stem.position.y = stemHeight / 2;
-            stem.scale.y = 0;
-            flower.add(stem);
-            flower.userData.stem = stem;
-
-            // Flower head group
-            const headGroup = new THREE.Group();
-            headGroup.position.y = stemHeight;
-            headGroup.rotation.x = tiltX;
-            headGroup.rotation.z = tiltZ;
-            headGroup.scale.set(0, 0, 0);
-            flower.add(headGroup);
-            flower.userData.headGroup = headGroup;
-
-            // Brown center disk
-            const diskGeometry = new THREE.CylinderGeometry(1.2, 1.2, 0.3, 32);
-            const disk = new THREE.Mesh(diskGeometry, diskMaterial);
-            disk.rotation.x = Math.PI / 2;
-            headGroup.add(disk);
-
-            // Petals group
-            const petalGroup = new THREE.Group();
-            petalGroup.rotation.x = Math.PI / 2;
-            headGroup.add(petalGroup);
-
-            // Create petals
-            const petals = [];
-            for (let i = 0; i < 20; i++) {
-                const angle = (i / 20) * Math.PI * 2;
-                const petal = new THREE.Mesh(petalGeometry, petalMaterial);
-
-                // Position at edge of disk
-                petal.position.set(
-                    Math.cos(angle) * 1.3,
-                    Math.sin(angle) * 1.3,
-                    0
-                );
-
-                // Rotate to point outward (like wheel spokes)
-                petal.rotation.z = angle - Math.PI / 2;
-
-                petal.scale.set(0, 0, 0);
-                petalGroup.add(petal);
-                petals.push(petal);
-            }
-            flower.userData.petals = petals;
-
-            // Apply overall scale
-            flower.scale.set(scale, scale, scale);
-
-            return flower;
-        }
-
-        // Bouquet arrangement
-        const bouquet = new THREE.Group();
-        bouquet.position.y = -5;
-        scene.add(bouquet);
-
-        const flowers = [];
-
-        // Center flower
-        flowers.push(createSunflower(10, 0, 0, 1.0));
-
-        // Medium ring (4 flowers)
-        const mediumRingData = [
-            { angle: 0, height: 8.5, tiltX: 0.15, scale: 0.95 },
-            { angle: Math.PI / 2, height: 7.5, tiltX: 0.15, scale: 0.9 },
-            { angle: Math.PI, height: 8, tiltX: 0.15, scale: 0.92 },
-            { angle: 3 * Math.PI / 2, height: 6.5, tiltX: 0.15, scale: 0.88 }
-        ];
-
-        mediumRingData.forEach(data => {
-            const flower = createSunflower(data.height, data.tiltX, 0, data.scale);
-            flower.position.x = Math.cos(data.angle) * 3;
-            flower.position.z = Math.sin(data.angle) * 3;
-            flower.rotation.y = data.angle;
-            flowers.push(flower);
-        });
-
-        // Outer ring (5 flowers)
-        const outerRingData = [
-            { angle: Math.PI / 5, height: 5.8, tiltX: 0.28, scale: 0.85 },
-            { angle: 3 * Math.PI / 5, height: 5.2, tiltX: 0.25, scale: 0.78 },
-            { angle: Math.PI, height: 4.8, tiltX: 0.3, scale: 0.7 },
-            { angle: 7 * Math.PI / 5, height: 5.5, tiltX: 0.27, scale: 0.8 },
-            { angle: 9 * Math.PI / 5, height: 5.0, tiltX: 0.26, scale: 0.75 }
-        ];
-
-        outerRingData.forEach(data => {
-            const flower = createSunflower(data.height, data.tiltX, 0, data.scale);
-            flower.position.x = Math.cos(data.angle) * 5.5;
-            flower.position.z = Math.sin(data.angle) * 5.5;
-            flower.rotation.y = data.angle;
-            flowers.push(flower);
-        });
-
-        flowers.forEach(flower => bouquet.add(flower));
-
-        // Easing function
-        function easeOutCubic(t) {
-            return 1 - Math.pow(1 - t, 3);
-        }
-
-        // Animation
-        let animationStartTime = null;
+        let scene, camera, renderer, rotationGroup, audioCtx;
+        let sunflowers = [];
         let isAnimating = false;
-
-        function animateFlower(flower, delay) {
-            const { stem, headGroup, petals, stemHeight } = flower.userData;
-
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    playGrowSound();
-
-                    const startTime = performance.now();
-
-                    function animate() {
-                        const elapsed = performance.now() - startTime;
-
-                        // Stem growth (0-2s)
-                        if (elapsed < 2000) {
-                            const t = easeOutCubic(elapsed / 2000);
-                            stem.scale.y = t;
-                            stem.position.y = (stemHeight / 2) * t;
-                        } else {
-                            stem.scale.y = 1;
-                            stem.position.y = stemHeight / 2;
-                        }
-
-                        // Disk appears (2-3s)
-                        if (elapsed >= 2000 && elapsed < 3000) {
-                            const t = easeOutCubic((elapsed - 2000) / 1000);
-                            headGroup.scale.set(t, t, t);
-                            headGroup.position.y = stemHeight * stem.scale.y;
-                        } else if (elapsed >= 3000) {
-                            headGroup.scale.set(1, 1, 1);
-                        }
-
-                        // Petals bloom (3-4s)
-                        if (elapsed >= 3000 && elapsed < 4000) {
-                            if (elapsed < 3100) playBloomSound();
-
-                            petals.forEach((petal, i) => {
-                                const petalStart = 3000 + i * 30;
-                                if (elapsed >= petalStart) {
-                                    const petalT = Math.min(1, (elapsed - petalStart) / 300);
-                                    const scale = easeOutCubic(petalT);
-                                    petal.scale.set(scale, scale, scale);
-                                }
-                            });
-                        } else if (elapsed >= 4000) {
-                            petals.forEach(petal => petal.scale.set(1, 1, 1));
-                        }
-
-                        if (elapsed < 4500) {
-                            requestAnimationFrame(animate);
-                        } else {
-                            flower.userData.animated = true;
-                            resolve();
-                        }
-                    }
-
-                    animate();
-                }, delay);
-            });
-        }
-
-        async function startBouquetAnimation() {
-            isAnimating = true;
-
-            for (let i = 0; i < flowers.length; i++) {
-                animateFlower(flowers[i], i * 400);
-            }
-
-            // Show final message after all animations
-            setTimeout(() => {
-                playCheerSound();
-                document.getElementById('finalMessage').style.display = 'flex';
-                isAnimating = false;
-            }, flowers.length * 400 + 4500);
-        }
-
-        // Reset flowers
-        function resetFlowers() {
-            flowers.forEach(flower => {
-                const { stem, headGroup, petals } = flower.userData;
-                stem.scale.y = 0;
-                stem.position.y = 0;
-                headGroup.scale.set(0, 0, 0);
-                petals.forEach(petal => petal.scale.set(0, 0, 0));
-                flower.userData.animated = false;
-            });
-            bouquet.rotation.x = 0;
-            bouquet.rotation.y = 0;
-        }
-
-        // Interaction state
-        let noAttempts = 0;
+        let globalTime = 0;
         let isDragging = false;
-        let previousMousePosition = { x: 0, y: 0 };
+        let previousMouseX = 0, previousMouseY = 0;
+        let hasPlayedCheer = false;
+        let noDodgeCount = 0;
 
-        // Button handlers
-        const btnYes = document.getElementById('btnYes');
-        const btnNo = document.getElementById('btnNo');
-        const questionBox = document.getElementById('questionBox');
-        const finalMessage = document.getElementById('finalMessage');
-        const sadMessage = document.getElementById('sadMessage');
+        // --- Restored Audio Engine ---
+      // --- REFINED WHIMSICAL AUDIO ---
+    function initAudio() { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
 
-        btnYes.addEventListener('click', () => {
-            initAudio();
-            questionBox.style.display = 'none';
-            startBouquetAnimation();
+    function playGrowSound() {
+        // Organic "whoosh" growth sound
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const filter = audioCtx.createBiquadFilter();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(80, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.3);
+        osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.6);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(400, audioCtx.currentTime);
+        filter.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.3);
+        filter.Q.value = 3;
+
+        gain.gain.setValueAtTime(0, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.08, audioCtx.currentTime + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.6);
+    }
+
+    function playBloomSound() {
+        // Magical sparkle cascade with harmonics
+        const now = audioCtx.currentTime;
+        const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6 major chord
+
+        notes.forEach((freq, i) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            const filter = audioCtx.createBiquadFilter();
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now);
+
+            filter.type = 'bandpass';
+            filter.frequency.value = freq * 2;
+            filter.Q.value = 2;
+
+            const delay = i * 0.08;
+            gain.gain.setValueAtTime(0, now + delay);
+            gain.gain.linearRampToValueAtTime(0.06, now + delay + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 1.2);
+
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + delay);
+            osc.stop(now + delay + 1.2);
+        });
+    }
+
+    function playCheerSound() {
+        // Triumphant fanfare with rising notes
+        const now = audioCtx.currentTime;
+        const fanfare = [
+            {f: 523.25, t: 0, d: 0.15},    // C
+            {f: 659.25, t: 0.12, d: 0.15}, // E
+            {f: 783.99, t: 0.24, d: 0.2},  // G
+            {f: 1046.5, t: 0.36, d: 0.5}   // High C (sustained)
+        ];
+
+        fanfare.forEach(note => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(note.f, now + note.t);
+
+            gain.gain.setValueAtTime(0, now + note.t);
+            gain.gain.linearRampToValueAtTime(0.12, now + note.t + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + note.t + note.d);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + note.t);
+            osc.stop(now + note.t + note.d);
         });
 
-        function dodgeNo() {
-            if (noAttempts >= 15) return;
+        // Add celebratory "sparkles" on top
+        for (let i = 0; i < 5; i++) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
 
+            osc.type = 'sine';
+            osc.frequency.value = 1500 + Math.random() * 1000;
+
+            const delay = 0.5 + i * 0.1;
+            gain.gain.setValueAtTime(0, now + delay);
+            gain.gain.linearRampToValueAtTime(0.04, now + delay + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.3);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + delay);
+            osc.stop(now + delay + 0.3);
+        }
+    }
+
+    function playDodgeSound() {
+        // Playful "boop" dodge sound
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, now);
+        osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.1);
+    }
+
+    function playSadSound() {
+        // Descending sad trombone effect
+        const now = audioCtx.currentTime;
+        const notes = [
+            {f: 392, t: 0, d: 0.3},      // G
+            {f: 349.23, t: 0.3, d: 0.3}, // F
+            {f: 293.66, t: 0.6, d: 0.3}, // D
+            {f: 246.94, t: 0.9, d: 0.5}  // B (low)
+        ];
+
+        notes.forEach(note => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(note.f, now + note.t);
+            osc.frequency.linearRampToValueAtTime(note.f * 0.9, now + note.t + note.d);
+
+            gain.gain.setValueAtTime(0, now + note.t);
+            gain.gain.linearRampToValueAtTime(0.1, now + note.t + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + note.t + note.d);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + note.t);
+            osc.stop(now + note.t + note.d);
+        });
+    }
+        class Sunflower {
+            constructor(tiltX, tiltZ, baseHeight, scaleFactor, delay) {
+                this.group = new THREE.Group();
+                this.group.position.set(0, -5, 0); 
+                this.delay = delay;
+                this.stemMaxHeight = baseHeight + (Math.random() * 0.6 - 0.3); 
+                this.scaleFactor = scaleFactor * (0.9 + Math.random() * 0.2);
+                this.hasPlayedGrow = false; this.hasPlayedBloom = false;
+                this.group.rotation.x = tiltX; this.group.rotation.z = tiltZ; 
+                this.createParts();
+                rotationGroup.add(this.group);
+            }
+
+            createParts() {
+                const stemGeo = new THREE.CylinderGeometry(0.06 * this.scaleFactor, 0.1 * this.scaleFactor, this.stemMaxHeight, 8);
+                stemGeo.translate(0, this.stemMaxHeight / 2, 0);
+                this.stem = new THREE.Mesh(stemGeo, new THREE.MeshPhongMaterial({ color: 0x3d6326 }));
+                this.stem.scale.y = 0.001;
+                this.group.add(this.stem);
+
+                this.head = new THREE.Group();
+                this.head.position.y = this.stemMaxHeight;
+                this.group.add(this.head);
+
+                const dr = 0.7 * this.scaleFactor;
+                this.disk = new THREE.Mesh(new THREE.CylinderGeometry(dr, dr, 0.2, 12), new THREE.MeshPhongMaterial({ color: 0x3e2723 }));
+                this.disk.rotation.x = Math.PI / 2;
+                this.disk.scale.set(0,0,0);
+                this.head.add(this.disk);
+
+                for (let i = 0; i < 20; i++) {
+                    const pg = new THREE.SphereGeometry(0.4 * this.scaleFactor, 8, 8);
+                    pg.scale(0.6, 1.8, 0.1); pg.translate(0, 0.8 * this.scaleFactor, 0);
+                    const p = new THREE.Mesh(pg, new THREE.MeshPhongMaterial({ color: 0xffd700 }));
+                    const a = (i / 20) * Math.PI * 2;
+                    p.position.set(Math.cos(a) * dr, Math.sin(a) * dr, -0.05);
+                    p.rotation.z = a - Math.PI / 2;
+                    p.scale.set(0,0,0);
+                    this.head.add(p);
+                }
+            }
+
+            update(t) {
+                const lt = t - this.delay;
+                if (lt < 0) return;
+                if (!this.hasPlayedGrow) { playGrowSound(); this.hasPlayedGrow = true; }
+                if (lt > 1.8 && !this.hasPlayedBloom) { playBloomSound(); this.hasPlayedBloom = true; }
+
+                if (lt < 2) this.stem.scale.y = easeOut(lt / 2);
+                else if (lt < 3) this.disk.scale.setScalar(easeOut(lt - 2));
+                else {
+                    const ps = easeOut(Math.min(1, (lt - 3) / 1));
+                    this.head.children.forEach((c, i) => { if(i>0) c.scale.setScalar(ps); });
+                }
+            }
+        }
+
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 1, window.innerWidth < window.innerHeight ? 22 : 18);
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas'), antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+            const light = new THREE.DirectionalLight(0xffffff, 0.6);
+            light.position.set(5, 10, 7);
+            scene.add(light);
+
+            rotationGroup = new THREE.Group();
+            scene.add(rotationGroup);
+
+            // Varied Height Tiers
+            const config = [
+                {tx: 0, tz: 0, h: 10, s: 1}, {tx: -0.1, tz: 0.1, h: 8.5, s: 0.9},
+                {tx: 0.2, tz: 0.4, h: 7.8, s: 0.9}, {tx: 0.2, tz: -0.4, h: 7, s: 0.9},
+                {tx: -0.2, tz: 0.4, h: 7.4, s: 0.8}, {tx: -0.2, tz: -0.4, h: 6.5, s: 0.8},
+                {tx: 0.5, tz: 0, h: 5.8, s: 0.85}, {tx: 0.4, tz: 0.7, h: 5.4, s: 0.75},
+                {tx: 0.4, tz: -0.7, h: 5.1, s: 0.75}, {tx: -0.4, tz: 0.8, h: 4.8, s: 0.7}
+            ];
+            config.forEach((c, i) => sunflowers.push(new Sunflower(c.tx, c.tz, c.h, c.s, i * 0.4)));
+
+            // --- Restored Interaction ---
+            const startMove = (x, y) => { isDragging = true; previousMouseX = x; previousMouseY = y; };
+            const doMove = (x, y) => {
+                if (isDragging) {
+                    rotationGroup.rotation.y += (x - previousMouseX) * 0.01;
+                    rotationGroup.rotation.x += (y - previousMouseY) * 0.01;
+                    previousMouseX = x; previousMouseY = y;
+                }
+            };
+            window.addEventListener('mousedown', e => startMove(e.clientX, e.clientY));
+            window.addEventListener('mousemove', e => doMove(e.clientX, e.clientY));
+            window.addEventListener('mouseup', () => isDragging = false);
+            window.addEventListener('touchstart', e => startMove(e.touches[0].clientX, e.touches[0].clientY));
+            window.addEventListener('touchmove', e => doMove(e.touches[0].clientX, e.touches[0].clientY));
+            window.addEventListener('touchend', () => isDragging = false);
+            
+            animate();
+        }
+
+        function handleNoClick(e) {
+            if (noDodgeCount >= 15) {
+                // After 15 attempts, process the actual "No" click
+                if (!audioCtx) initAudio();
+                playSadSound();
+
+                // Hide question box and show sad message
+                document.getElementById('questionBox').classList.add('hide');
+                document.getElementById('finalMessage').innerHTML = '<h2>Zernie\'s sad 😢</h2><button class="reset-btn" onclick="resetAnimation()">Try again? 💕</button>';
+                document.getElementById('finalMessage').classList.add('show');
+                return;
+            }
+
+            // Still dodging - move the button on click
+            e.preventDefault();
+            if (!audioCtx) initAudio();
+
+            noDodgeCount++;
             playDodgeSound();
-            noAttempts++;
 
-            const maxX = window.innerWidth - btnNo.offsetWidth - 100;
-            const maxY = window.innerHeight - btnNo.offsetHeight - 100;
+            const noBtn = document.getElementById('noBtn');
 
-            const newX = Math.random() * maxX;
-            const newY = Math.random() * maxY;
-
-            btnNo.style.position = 'fixed';
-            btnNo.style.left = newX + 'px';
-            btnNo.style.top = newY + 'px';
-        }
-
-        btnNo.addEventListener('mouseenter', dodgeNo);
-        btnNo.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            if (noAttempts >= 15) {
-                showSadMessage();
-            } else {
-                dodgeNo();
+            if (noDodgeCount >= 15) {
+                // Change button text and make it clickable
+                noBtn.textContent = "No 😔";
+                return;
             }
-        }, { passive: false });
 
-        btnNo.addEventListener('click', () => {
-            if (noAttempts >= 15) {
-                showSadMessage();
+            const container = document.getElementById('questionBox');
+            const containerRect = container.getBoundingClientRect();
+            const btnRect = noBtn.getBoundingClientRect();
+
+            // Calculate safe boundaries (with padding)
+            const padding = 20;
+            const maxX = (containerRect.width / 2) - (btnRect.width / 2) - padding;
+
+            let randomX, randomY;
+
+            // Generate random horizontal position
+            randomX = (Math.random() * 2 - 1) * maxX;
+
+            // For vertical: ONLY move down or stay, never move up (which would overlap Yes button)
+            // Random range from 0 to +60px down from initial position
+            randomY = Math.random() * 60;
+
+            // Keep the -50% X centering and add the random offset
+            noBtn.style.transform = `translate(calc(-50% + ${randomX}px), ${randomY}px)`;
+        }
+
+        function startAnimation() {
+            if (!audioCtx) initAudio();
+            isAnimating = true;
+            document.getElementById('questionBox').classList.add('hide');
+        }
+
+        function resetAnimation() {
+            // Hide message and show question
+            document.getElementById('finalMessage').classList.remove('show');
+            document.getElementById('finalMessage').innerHTML = '<h2>I LOVE YOU</h2><button class="reset-btn" onclick="resetAnimation()">Again? 💕</button>';
+            document.getElementById('questionBox').classList.remove('hide');
+
+            // Reset No button position to initial state
+            const noBtn = document.getElementById('noBtn');
+            noBtn.style.transform = 'translateX(-50%)';
+            noBtn.style.top = '60px';
+            noBtn.textContent = 'No';
+
+            // Reset animation state
+            isAnimating = false;
+            globalTime = 0;
+            hasPlayedCheer = false;
+            noDodgeCount = 0;
+
+            // Clear existing sunflowers
+            sunflowers.forEach(s => rotationGroup.remove(s.group));
+            sunflowers = [];
+
+            // Recreate sunflowers
+            const config = [
+                {tx: 0, tz: 0, h: 10, s: 1}, {tx: -0.1, tz: 0.1, h: 8.5, s: 0.9},
+                {tx: 0.2, tz: 0.4, h: 7.8, s: 0.9}, {tx: 0.2, tz: -0.4, h: 7, s: 0.9},
+                {tx: -0.2, tz: 0.4, h: 7.4, s: 0.8}, {tx: -0.2, tz: -0.4, h: 6.5, s: 0.8},
+                {tx: 0.5, tz: 0, h: 5.8, s: 0.85}, {tx: 0.4, tz: 0.7, h: 5.4, s: 0.75},
+                {tx: 0.4, tz: -0.7, h: 5.1, s: 0.75}, {tx: -0.4, tz: 0.8, h: 4.8, s: 0.7}
+            ];
+            config.forEach((c, i) => sunflowers.push(new Sunflower(c.tx, c.tz, c.h, c.s, i * 0.4)));
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            if (isAnimating) {
+                globalTime += 0.016;
+                sunflowers.forEach(s => s.update(globalTime));
+                if (globalTime >= 8) {
+                    document.getElementById('finalMessage').classList.add('show');
+                    if (!hasPlayedCheer) {
+                        playCheerSound();
+                        hasPlayedCheer = true;
+                    }
+                }
             }
-        });
-
-        function showSadMessage() {
-            playSadSound();
-            questionBox.style.display = 'none';
-            btnNo.style.display = 'none';
-            sadMessage.style.display = 'flex';
+            renderer.render(scene, camera);
         }
-
-        // Reset buttons
-        document.getElementById('btnReset').addEventListener('click', resetAll);
-        document.getElementById('btnResetSad').addEventListener('click', resetAll);
-
-        function resetAll() {
-            noAttempts = 0;
-            resetFlowers();
-            finalMessage.style.display = 'none';
-            sadMessage.style.display = 'none';
-            btnNo.style.position = 'relative';
-            btnNo.style.left = '';
-            btnNo.style.top = '';
-            btnNo.style.display = '';
-            questionBox.style.display = '';
-        }
-
-        // Drag rotation
-        container.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            previousMousePosition = { x: e.clientX, y: e.clientY };
-        });
-
-        container.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-
-            const deltaX = e.clientX - previousMousePosition.x;
-            const deltaY = e.clientY - previousMousePosition.y;
-
-            bouquet.rotation.y += deltaX * 0.005;
-            bouquet.rotation.x += deltaY * 0.005;
-            bouquet.rotation.x = Math.max(-0.5, Math.min(0.5, bouquet.rotation.x));
-
-            previousMousePosition = { x: e.clientX, y: e.clientY };
-        });
-
-        container.addEventListener('mouseup', () => {
-            isDragging = false;
-        });
-
-        container.addEventListener('mouseleave', () => {
-            isDragging = false;
-        });
-
-        // Touch events
-        container.addEventListener('touchstart', (e) => {
-            isDragging = true;
-            previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-        }, { passive: false });
-
-        container.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            e.preventDefault();
-
-            const deltaX = e.touches[0].clientX - previousMousePosition.x;
-            const deltaY = e.touches[0].clientY - previousMousePosition.y;
-
-            bouquet.rotation.y += deltaX * 0.005;
-            bouquet.rotation.x += deltaY * 0.005;
-            bouquet.rotation.x = Math.max(-0.5, Math.min(0.5, bouquet.rotation.x));
-
-            previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-        }, { passive: false });
-
-        container.addEventListener('touchend', () => {
-            isDragging = false;
-        });
-
-        // Window resize
+        function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+        init();
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
-
-        // Render loop
-        function render() {
-            requestAnimationFrame(render);
-
-            // Idle auto-rotation
-            if (!isDragging && !isAnimating) {
-                bouquet.rotation.y += 0.002;
-            }
-
-            renderer.render(scene, camera);
-        }
-
-        render();
     </script>
 </body>
 </html>
